@@ -10,10 +10,10 @@ QT5 for PololuMaestro Servo Control
   <br/>
   
 ### for MAC: 
-Upgrage firmware to V1.03 
-  - [FirmwareUpgrade](https://www.pololu.com/docs/0J40/4.f)
-
-Config firmware setting with USB Dual Port
+1)Upgrage firmware to V1.03 
+-[FirmwareUpgrade](https://www.pololu.com/docs/0J40/4.f)
+<br/>
+2)Config firmware setting with USB Dual Port
 ![DualPort](images/PololuUSBDualPort.png)
 
 
