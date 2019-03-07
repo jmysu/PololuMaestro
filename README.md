@@ -13,5 +13,5 @@ Upgrage firmware to V1.03
   [Pololu Firmware upgrade](https://www.pololu.com/docs/0J40/4.f)
   <br/>
 Config firmware setting with USB Dual Port
-![Pololu Maestro USB Dual Port](images/Pololu USB DualPort.png)
+![Pololu Maestro USB Dual Port](images/PololuUSBDualPort.png)
 <br/>
