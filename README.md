@@ -1,5 +1,5 @@
 # PololuMaestro
-QT5 for PololuMaestro Servo Control
+QT5 for PololuMaestro Servo Control, works on macOS high sierra, Lubuntu 18.04 and Windows10
   <br/>
   <br/>
   
