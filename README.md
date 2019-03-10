@@ -1,5 +1,5 @@
 # PololuMaestro
-QT5 for PololuMaestro Servo Control, works on macOS high sierra, Lubuntu 18.04 and Windows10
+**QT5** for PololuMaestro Servo Control, works on **macOS** high sierra, **Lubuntu** 18.04 and **Windows10**
   <br/>
   <br/>
   
@@ -12,9 +12,9 @@ QT5 for PololuMaestro Servo Control, works on macOS high sierra, Lubuntu 18.04 a
   <br/>
   
 ### for MAC:
-1)Upgrage firmware to V1.03<br/>
+1)Upgrage firmware to __V1.03__<br/>
   
-2)Config firmware setting with USB Dual Port<br/>
+2)Config firmware setting with __USB Dual Port__<br/>
 ![DualPort](images/PololuUSBDualPort.png)
 
 
