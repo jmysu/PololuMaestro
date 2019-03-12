@@ -18,13 +18,13 @@
 #include <QSignalMapper>
 #include <QWidget>
 #include <QDebug>
+#include <qrandom.h>
 
 #include "ui_mainwindow.h"
 #include "constants.h"
+#include <QStandardPaths>
 
 /**************************************************************************************************/
-
-enum terminal_modes { ASCII, HEX, ASCII_HEX };
 
 namespace Ui {
 class MainWindow;
@@ -39,16 +39,33 @@ class MainWindow : public QMainWindow
         ~MainWindow();
         QSerialPort *mSerialPort;
 
-        static const unsigned short mMaestroChannels  = 12; //Maestro Channels
-        static const unsigned short mMaestroSpeedInit = 10; //Maestro Init Speed
-        static const unsigned short mMaestroAccInit   = 250;//Maestro Init Accelation
-        static const unsigned short mMaestroMinValue  = 0x0F80; //0x0F80
-        static const unsigned short mMaestroMaxlValue = 0x1F40; //0x1F40
+        static const int8_t mMaestroChannels  = 12; //Maestro Channels
+        static const int8_t mMaestroSpeedInit = 20; //Maestro Init Speed
+        static const int8_t mMaestroAccInit   = 40;//Maestro Init Accelation
+        static const int16_t mChannelMin      = 1000; //1000us
+        static const int16_t mChannelMax      = 2000; //2000us
+        //First 6 Channel min/max
+        const int16_t mChannelMaxAdj[mMaestroChannels]={-200,0,0,0, 0,0,0,0, 0,0,0,0};
+        const int16_t mChannelMinAdj[mMaestroChannels]={+500,0,0,0, 0,0,0,0, 0,0,0,0};
+
+        QStringList slOutputOptions = {"Off", "Servo", "Input", "Output"};
+
         //Settings
         void saveSettings();
         void readSettings();
-        QString mAppDirPath = QApplication::applicationDirPath();
+        QString sSettingsPort;
+        QString sSettingsBaud;
+        QStringList slSettingsChannelOpt;
+        void MaestroRestoreSettings();
+
+
+        QString configDir() {//Windows C:\Users\jimmy\AppData\Roaming\MaestroSerialTerm
+            return QStandardPaths::standardLocations(QStandardPaths::AppDataLocation).first();
+            }
+
         bool bSerialOpen = false;
+        QTimer *timerMaestroSweep;
+        QTimer *timerMaestroCrazy;
 
     private:
         Ui::MainWindow *ui;
@@ -73,11 +90,13 @@ class MainWindow : public QMainWindow
         QByteArray baLastCmd, baRespose;
         void MaestroGoHome();
         int16_t MaestroGetError();
-        int16_t MaestroGetPosition(char ch);
-        void MaestroSetTarget(char ch, int pos);
-        void MaestroSetSpeed(char ch, int speed);
-        void MaestroSetAcc(char ch, int acc);
+        int16_t MaestroGetPositionUs(int8_t ch);
+        void MaestroSetTargetUs(int8_t ch, int16_t pos);
+        void MaestroSetSpeed(int8_t ch, int16_t speed);
+        void MaestroSetAcc(int8_t ch, int16_t acc);
         void MaestroTabInit();
+
+
 
     private slots:
         void SerialPortsCheck(void);
@@ -102,6 +121,7 @@ class MainWindow : public QMainWindow
         void MenuBarAboutClick(void);
 
         //---------------------------------------------------------------------
+        void slotChannelOptChanged();
         void slotTargetSpinBox();
         void slotTargetSlider();
         void slotSpeedSpinBox();
@@ -109,6 +129,11 @@ class MainWindow : public QMainWindow
 
         void on_pushButtonReadError_clicked();
         void on_pushButtonInit_clicked();
+        void on_spinBoxSweep_editingFinished();
+        void on_spinBoxCrazy_editingFinished();
+        void slotMaestroSweep();
+        void slotMaestroCrazy();
+        void on_comboBoxSmooth_currentIndexChanged(const QString &arg1);
 };
 
 /**************************************************************************************************/

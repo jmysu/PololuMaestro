@@ -38,6 +38,24 @@ void MainWindow::SerialPortsCheck(void)
         slAvailableSerialPorts.removeAt(i);
         ui->comboBox_SerialPort->removeItem(i);
         }
+
+    //Check if mSettingsPort available?
+    if (ui->comboBox_SerialPort->currentText() != sSettingsPort) {
+        int iPortIdx = ui->comboBox_SerialPort->findText(sSettingsPort);
+        if (iPortIdx >0) {
+            ui->comboBox_SerialPort->setCurrentIndex(iPortIdx);
+            qDebug() << "Restored Serial Port Name:" << ui->comboBox_SerialPort->currentText();
+            }
+        }
+    //Update baud from settings
+    if (ui->comboBox_bauds->currentText() != sSettingsBaud) {
+        int iBaudIdx = ui->comboBox_bauds->findText(sSettingsBaud);
+        if( iBaudIdx>=0 ) {
+            ui->comboBox_bauds->setCurrentIndex(iBaudIdx);
+            qDebug() << "Restored Serial Bauds:" << ui->comboBox_bauds->currentText();
+            }
+    }
+
 }
 
 /* Serial Port Error Signal Handler */
@@ -105,7 +123,7 @@ void MainWindow::OpenSerialPort(void)
             ui->lineEdit_toSend_Hex->setFocus();
 
         debug_print("Port successfully open.");
-        this->setWindowTitle(selected_port);
+        this->setWindowTitle(APP_NAME+QString(" V")+APP_VERSION+QString(" ")+selected_port);
 
         //Display serial info
         QSerialPortInfo info =  QSerialPortInfo(mSerialPort->portName());
@@ -119,8 +137,12 @@ void MainWindow::OpenSerialPort(void)
         ui->tabMaestro->setEnabled(true);
         bSerialOpen = true;
 
-        if (ui->tabMaestro->isVisible())
+        if (ui->tabMaestro->isVisible()){
+            ui->comboBoxSmooth->setCurrentIndex(E0_ServoSmooth);
+            ui->comboBoxSmooth->currentIndexChanged(ui->comboBoxSmooth->currentText());
+
             on_pushButtonInit_clicked();
+            }
         }
 }
 
@@ -179,7 +201,7 @@ void MainWindow::SerialSendAscii(void)
     ui->lineEdit_toSend->setFocus();
 }
 
-/* TODO: null byte check*/
+
 /* Serial Sends Hex*/
 void MainWindow::SerialSendHex(void)
 {
@@ -201,9 +223,11 @@ void MainWindow::SerialSendHex(void)
     if(mSerialPort->isWritable()) {
         // Convert HexString to QByteArray to send a char* type
         baLastCmd = QByteArray::fromHex(qstr_to_send.toUtf8());
-        //qDebug() << "Sending Hex:" << baLastCmd;
         long long iWritten = mSerialPort->write(baLastCmd.data(), baLastCmd.size()); //Without size, the NULL will terminate write!!!
-        qDebug() << "Sent Hex:" << baLastCmd.toHex() << "Bytes:" << iWritten;
+        //qDebug() << "Sent Hex:" << baLastCmd.toHex() << "Bytes:" << iWritten;
+        QString sHex = baLastCmd.toHex();
+        QString sSentHex = QString("Sent Hex:%1 (%2bytes)").arg(sHex).arg(iWritten);
+        qDebug() << sSentHex;
         }
 
     ui->lineEdit_toSend_Hex->setFocus();

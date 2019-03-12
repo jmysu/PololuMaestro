@@ -1,5 +1,4 @@
 ﻿#include "mainwindow.h"
-//#include "MaestroChannel.h"
 /**************************************************************************************************/
 
 /* Main Window Constructor & Destructor */
@@ -11,6 +10,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     debug_print("Setup process start.");
     debug_print("Initializing App Window...");
     ui->setupUi(this);
+
+    //Restore Settings
+    debug_print("Restoring Settings");
+    readSettings();
+
     ui->lineEdit_toSend->installEventFilter(this);
     ui->lineEdit_toSend_Hex->installEventFilter(this);
 
@@ -25,8 +29,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     terminal_mode = ASCII;
     /////////// terminal_mode & baud rate restoring
-    debug_print("Restoring Settings");
-    readSettings();
 
     // TextBrowsers initialization
     QFont font0("Courier");
@@ -103,9 +105,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     debug_print("Setup process end.\n");
 
     //Add Maestro Channels UI
-    MaestroTabInit();
     ui->tabTerminal->setEnabled(false);
     ui->tabMaestro->setEnabled(false);
+    MaestroTabInit();
+    MaestroRestoreSettings();
 }
 
 // Main Window Destructor
@@ -174,7 +177,7 @@ void MainWindow::CBoxBaudsChanged(void)
         debug_print("Reconnecting to port using new baudrate.");
         CloseSerialPort();
         OpenSerialPort();
-    }
+        }
 }
 
 // ComboBox EOL change event handler
@@ -474,6 +477,8 @@ void MainWindow::PrintReceivedData(QTextBrowser* textBrowser0, QTextBrowser *tex
                 // Write data line to ASCII and HEX textboxes
                 textBrowser0->insertPlainText(qstr_to_print_ascii);
                 textBrowser1->insertPlainText(to_print_hex);
+                textBrowser0->insertPlainText("\n");
+                textBrowser1->insertPlainText("\n");
 
                 // If Autoscroll is checked, scroll to bottom
                 QScrollBar *vertical_bar_ascii = textBrowser0->verticalScrollBar();
@@ -552,8 +557,7 @@ void MainWindow::ButtonSendHexPressed(void)
 bool MainWindow::eventFilter(QObject *target, QEvent *event)
 {
     // If Event is a keyboard key press
-    if(event->type() == QEvent::KeyPress)
-    {
+    if(event->type() == QEvent::KeyPress){
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
 
         // If Key pressed is Up arrow, the focus is set to send box and history is not empty
@@ -576,7 +580,7 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event)
                     }
                 }
 
-        }
+            }
 
         // If Key pressed is Down arrow, the focus is set to send box and history is not empty
         if(keyEvent->key() == Qt::Key_Down){
@@ -602,7 +606,7 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event)
                     }
                 }
             }
-    }
+        }
 
     return QObject::eventFilter(target, event);
 }
@@ -697,11 +701,15 @@ void MainWindow::MenuBarAboutClick(void)
 {
     // Create a Dialog who is child of mainwindow
     QDialog *dialog = new QDialog(this, Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
-    dialog->setWindowTitle("About Maestro Serial Term");
-    dialog->setMinimumSize(QSize(480, 280));
-    dialog->setMaximumSize(QSize(480, 280));
+    dialog->setWindowTitle(QString("About ")+APP_NAME+" V"+APP_VERSION);
+    dialog->setMinimumSize(QSize(640, 400));
+    dialog->setMaximumSize(QSize(640, 400));
 
     QString strAboutOS =  "<br/><br/><br/> <br>OS: "+QSysInfo::prettyProductName();
+
+    QString sSettings = configDir()+"/"+ APP_NAME;
+    sSettings +=".ini";
+    QString strSettings = "<br/><br>Settings: "+sSettings;
 
     // Add Dialog about text
     QLabel* label = new QLabel(dialog);
@@ -711,7 +719,7 @@ void MainWindow::MenuBarAboutClick(void)
     label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     label->setTextInteractionFlags(Qt::TextBrowserInteraction);
     label->setOpenExternalLinks(true);
-    label->setText(ABOUT_TEXT+strAboutOS);
+    label->setText(ABOUT_TEXT+strAboutOS+strSettings);
     QHBoxLayout* layout = new QHBoxLayout(dialog);
     layout->setContentsMargins(30,20,30,30);
     layout->addWidget(label);
@@ -720,3 +728,7 @@ void MainWindow::MenuBarAboutClick(void)
     // Execute the Dialog (show() instead dont block parent user interactions)
     dialog->exec();
 }
+
+
+
+

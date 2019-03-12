@@ -25,6 +25,8 @@ void delayMs( int millisecondsToWait )
 */
 void MainWindow::MaestroGoHome()
 {
+    qDebug() << "\n" << Q_FUNC_INFO;
+
      QByteArray ba;
      ba[0] = static_cast<char>(0xA2);         //Compact Protocol CMD
      if(mSerialPort->isWritable()) {
@@ -42,6 +44,8 @@ void MainWindow::MaestroGoHome()
  */
 int16_t MainWindow::MaestroGetError()
 {
+    qDebug() << "\n" << Q_FUNC_INFO;
+
     QByteArray ba;
     int16_t error=0;
 
@@ -53,7 +57,7 @@ int16_t MainWindow::MaestroGetError()
         for (int i=0;i<100;i++){ //max 1000ms
             delayMs(10);
             if (baRespose.size()>0){
-                qDebug() << "Resp:0x" << baRespose.toHex();
+                qDebug() <<"Resp:0x" << baRespose.toHex();
                 error = baRespose[0]+baRespose[1]*256;
                 break;
                 }
@@ -74,10 +78,12 @@ Get Position
     Pololu protocol: 0xAA, device number, 0x10, channel number
     Response: position low 8 bits, position high 8 bits
 */
-int16_t MainWindow::MaestroGetPosition(char ch)
+int16_t MainWindow::MaestroGetPositionUs(int8_t ch)
 {
+    qDebug() << "\n" << Q_FUNC_INFO;
+
     QByteArray ba;
-    int16_t pos=0;
+    int16_t pos=0, steps=0;
 
     ba[0] = static_cast<char>(0x90);         //Compact Protocol CMD
     ba[1] = static_cast<char>(ch);           //Channel number
@@ -90,12 +96,14 @@ int16_t MainWindow::MaestroGetPosition(char ch)
         for (int i=0;i<100;i++){ //max 1000ms
             delayMs(10);
             if (baRespose.size()>0){
-                qDebug() << "Maestro GotPosion:" << baRespose.toHex();
+                qDebug() << "Maestro GotPosion Steps:" << baRespose.toHex();
                 unsigned char cLSB = static_cast<unsigned char>(baRespose[0]);
                 unsigned char cMSB = static_cast<unsigned char>(baRespose[1]);
                 //qDebug() << QString::number(iLSB,16) << QString::number(iMSB, 16);
-                pos = (cMSB<<8)+cLSB;
-                //qDebug() << QString::number(pos, 16);
+                steps = (cMSB*256)+cLSB;
+                qDebug() << "GotPostion steps:" << steps;
+                pos = steps/4;    //convert steps back to us
+                qDebug() << "GotPosition   us:" << pos;
                 break;
                 }
             }
@@ -127,20 +135,24 @@ Set Target
     in decimal: 132, 2, 112, 46
 
 */
-void MainWindow::MaestroSetTarget(char ch, int pos)
+void MainWindow::MaestroSetTargetUs(int8_t ch, int16_t us)
 {
+    qDebug() << "\n" << Q_FUNC_INFO;
+    if ((us<mChannelMin) || (us>mChannelMax)) return;
+
+    int steps = us*4; //convert us to steps (4steps=1us)
     QByteArray ba;
     ba[0] = static_cast<char>(0x84);         //Compact Protocol CMD
     ba[1] = static_cast<char>(ch);           //Channel number
-    ba[2] = static_cast<char>(pos & 0x7F);   //LSB
-    ba[3] = static_cast<char>((pos >> 7) & 0x7F);     //MSB
+    ba[2] = static_cast<char>(steps & 0x7F);   //LSB
+    ba[3] = static_cast<char>((steps >> 7) & 0x7F);     //MSB
     if(mSerialPort->isWritable()) {
         baLastCmd = ba;
-        //mSerialPort->write(baLastCmd.data()); //will stop after 0x00
         long long iWritten = mSerialPort->write(baLastCmd.data(), 4);
-        qDebug() << "\nMaestroSetTarget:" << baLastCmd.toHex() << iWritten;
+        qDebug() << "MaestroSetTarget steps:" << steps << baLastCmd.toHex() << iWritten;
+        qDebug() << "Position us:" << us;
         }
-    delayMs(10);
+    delayMs(100); //allow some delay for smoothing delay
 }
 
 /*
@@ -153,8 +165,10 @@ The speed limit is given in units of (0.25 μs)/(10 ms), except in special cases
     For example, the command 0x87, 0x05, 0x0C, 0x01
 sets the speed of servo channel 5 to a value of 140, which corresponds to a speed of 3.5 μs/ms.
  */
-void MainWindow::MaestroSetSpeed(char ch, int speed)
+void MainWindow::MaestroSetSpeed(int8_t ch, int16_t speed)
 {
+    qDebug() << "\n" << Q_FUNC_INFO;
+
     QByteArray ba;
     ba[0] = static_cast<char>(0x87);         //Compact Protocol CMD
     ba[1] = static_cast<char>(ch);           //Channel number
@@ -164,7 +178,7 @@ void MainWindow::MaestroSetSpeed(char ch, int speed)
         baLastCmd = ba;
         //mSerialPort->write(baLastCmd.data()); //will stop after 0x00
         long long iWritten = mSerialPort->write(baLastCmd.data(), 4);
-        qDebug() << "\nMaestroSetSpeed:" << baLastCmd.toHex() << iWritten;
+        qDebug() << "MaestroSetSpeed:" << baLastCmd.toHex() << iWritten;
         }
     delayMs(10);
 }
@@ -178,8 +192,10 @@ Pololu protocol: 0xAA, device number, 0x09, channel number, acceleration low bit
     The acceleration limit is a value from 0 to 255 in units of (0.25 μs)/(10 ms)/(80 ms), except in special cases (see Section 4.b).
     A value of 0 corresponds to no acceleration limit.
  */
-void MainWindow::MaestroSetAcc(char ch, int acc)
+void MainWindow::MaestroSetAcc(int8_t ch, int16_t acc)
 {
+    qDebug() << "\n" << Q_FUNC_INFO;
+
     QByteArray ba;
     ba[0] = static_cast<char>(0x89);         //Compact Protocol CMD
     ba[1] = static_cast<char>(ch);           //Channel number
@@ -189,7 +205,7 @@ void MainWindow::MaestroSetAcc(char ch, int acc)
         baLastCmd = ba;
         //mSerialPort->write(baLastCmd.data()); //will stop after 0x00
         long long iWritten = mSerialPort->write(baLastCmd.data(), 4);
-        qDebug() << "\nMaestroSetAcc:" << baLastCmd.toHex() << iWritten;
+        qDebug() << "MaestroSetAcc:" << baLastCmd.toHex() << iWritten;
         }
     delayMs(10);
 }

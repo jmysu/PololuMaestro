@@ -50,27 +50,10 @@ QStringList static comboBox_bauds_values =
     "2000000"
 };
 const int bauds_default_value = 9; // 9 = 115200
-/*
+
 const QString ABOUT_TEXT =
-    "SUSTerm (Simple Universal Serial Terminal) is a free and open GNU-GPL software which is " \
-    "focused in minimalist and be efficiently fast and easy to use.<br/>" \
-    "<br/>" \
-    "Actual Version: 1.4<br/>" \
-    "<br/>" \
-    "This software was developed by @J-Rios and you can get the code at:<br/>" \
-    "&nbsp;&nbsp;&nbsp;&nbsp;" \
-    "<a href=\"https://github.com/J-Rios/SUSTerm\">https://github.com/J-Rios/SUSTerm</a><br/>" \
-    "<br/>" \
-    "Do you like this App? Buy me a coffe:<br/>" \
-    "&nbsp;&nbsp;&nbsp;&nbsp;" \
-    "Paypal - <a href=\"https://www.paypal.me/josrios\">https://www.paypal.me/josrios</a><br/>" \
-    "&nbsp;&nbsp;&nbsp;&nbsp;" \
-    "BTC    - 3N9wf3FunR6YNXonquBeWammaBZVzTXTyR" \
-    "<p dir=\"rtl\">(: Enjoy this Terminal</p>"; */
-const QString ABOUT_TEXT =
-    "MaestroSerialTerm is a free and open GNU-GPL software which is " \
-    "focused in minimalist and be efficiently fast and easy to use.<br/>" \
-    "<br/>" \
+    "Maestro Serial Term is based on Qt5 QSerialPort, works for macOS, Linux and Windows.<br/>  " \
+    "Currently supports Maestro Compact Protocol.<br/><br/><br/>" \
     "QSerial Terminal Reference: <a href=\"https://github.com/J-Rios/SUSTerm\"> Github repo.</a>" \
     "<br/>" \
     "C++ Masestro Reference: <a href=\"https://github.com/jbitoniau/RapaPololuMaestro\"> Github repo. </a>" \
@@ -79,18 +62,25 @@ const QString ABOUT_TEXT =
     ;
 
 /**************************************************************************************************/
+enum terminal_modes { ASCII, HEX, ASCII_HEX };
 
 enum Maestro {
-    E0_ChannelNumber,
-    E1_Position,
-    E2_PositionSpinBox,
-    E3_Target,
-    E4_TargetSpinBox,
-    E5_TargetSlider,
-    E6_Speed,
-    E7_SpeedSpinBox,
-    E8_Acc,
-    E9_AccSpinBox
+    E0_OutputOpt,
+    E1_ChannelNumber,
+    E2_Position,
+    E3_PositionSpinBox,
+    E4_Target,
+    E5_TargetSpinBox,
+    E6_TargetSlider,
+    E7_Speed,
+    E8_SpeedSpinBox,
+    E9_Acc,
+    E10_AccSpinBox
+};
+
+enum MaestroServoSmooth {
+    E0_ServoSmooth,
+    E1_ServoFast
 };
 
 #endif // CONSTANTS_H

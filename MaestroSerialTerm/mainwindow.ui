@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>SerialTerm</string>
+   <string>MaestroSerialTerm</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
@@ -55,6 +55,11 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <family>Arial</family>
+         </font>
+        </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
         </property>
@@ -77,6 +82,11 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <family>Arial</family>
+         </font>
+        </property>
         <property name="locale">
          <locale language="English" country="UnitedStates"/>
         </property>
@@ -96,6 +106,11 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <family>Arial</family>
+         </font>
+        </property>
         <property name="locale">
          <locale language="English" country="UnitedStates"/>
         </property>
@@ -114,6 +129,11 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <family>Arial</family>
+         </font>
         </property>
         <property name="toolTip">
          <string/>
@@ -142,6 +162,11 @@
     </item>
     <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+       </font>
+      </property>
       <property name="currentIndex">
        <number>1</number>
       </property>
@@ -196,8 +221,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>992</width>
-             <height>329</height>
+             <width>994</width>
+             <height>379</height>
             </rect>
            </property>
            <property name="sizePolicy">
@@ -619,6 +644,11 @@ p, li { white-space: pre-wrap; }
             <height>46</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+           </font>
+          </property>
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
           </property>
@@ -634,8 +664,13 @@ p, li { white-space: pre-wrap; }
              <height>36</height>
             </rect>
            </property>
+           <property name="font">
+            <font>
+             <family>Arial</family>
+            </font>
+           </property>
            <property name="toolTip">
-            <string>Init targetPosition, Speed and Acc</string>
+            <string>Init targetPosition.</string>
            </property>
            <property name="text">
             <string>Init</string>
@@ -650,40 +685,132 @@ p, li { white-space: pre-wrap; }
              <height>36</height>
             </rect>
            </property>
+           <property name="font">
+            <font>
+             <family>Arial</family>
+            </font>
+           </property>
            <property name="text">
             <string>ReadError</string>
-           </property>
-          </widget>
-          <widget class="QLabel" name="label">
-           <property name="geometry">
-            <rect>
-             <x>300</x>
-             <y>12</y>
-             <width>51</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Error:</string>
            </property>
           </widget>
           <widget class="QLabel" name="labelError">
            <property name="geometry">
             <rect>
-             <x>350</x>
+             <x>280</x>
              <y>12</y>
              <width>91</width>
              <height>20</height>
             </rect>
            </property>
+           <property name="font">
+            <font>
+             <family>Arial</family>
+            </font>
+           </property>
            <property name="text">
             <string>00000000</string>
            </property>
+          </widget>
+          <widget class="QLabel" name="label_2">
+           <property name="geometry">
+            <rect>
+             <x>639</x>
+             <y>12</y>
+             <width>91</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <family>Arial</family>
+            </font>
+           </property>
+           <property name="text">
+            <string>Servo Sweep</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_3">
+           <property name="geometry">
+            <rect>
+             <x>810</x>
+             <y>12</y>
+             <width>91</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <family>Arial</family>
+            </font>
+           </property>
+           <property name="text">
+            <string>Crazy Servo</string>
+           </property>
+          </widget>
+          <widget class="QSpinBox" name="spinBoxSweep">
+           <property name="geometry">
+            <rect>
+             <x>729</x>
+             <y>10</y>
+             <width>51</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="toolTip">
+            <string>0-99s,
+Hit &lt;Enter&gt; to apply!</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+          <widget class="QSpinBox" name="spinBoxCrazy">
+           <property name="geometry">
+            <rect>
+             <x>900</x>
+             <y>10</y>
+             <width>51</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="toolTip">
+            <string>0-99s,
+Hit &lt;Enter&gt; to apply!</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+          <widget class="QComboBox" name="comboBoxSmooth">
+           <property name="geometry">
+            <rect>
+             <x>500</x>
+             <y>10</y>
+             <width>91</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Smooth</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Fast</string>
+            </property>
+           </item>
           </widget>
          </widget>
         </item>
         <item>
          <widget class="QScrollArea" name="scrollAreaMaestro">
+          <property name="font">
+           <font>
+            <family>Arial</family>
+           </font>
+          </property>
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
@@ -692,8 +819,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>992</width>
-             <height>401</height>
+             <width>994</width>
+             <height>437</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -716,6 +843,11 @@ p, li { white-space: pre-wrap; }
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+       </font>
+      </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
@@ -735,7 +867,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
