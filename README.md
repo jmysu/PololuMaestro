@@ -2,8 +2,8 @@
 **QT5** for PololuMaestro Servo Control, works on **macOS** high sierra, **Lubuntu** 18.04 and **Windows10**
   <br/>
   <br/>
-![MasestroSerialTerm](images/MaestroSerialTerm0312.png)  
-  
+![MaestroSerialTerm](images/MaestroSerialTerm0312.png)  
+ 
 ### References
   - [Maestro Serial Settings](https://www.pololu.com/docs/0J40/5.a)
   - [Maestro Serial Protocol](https://www.pololu.com/docs/0J40/5.c)
