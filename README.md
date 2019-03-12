@@ -17,4 +17,7 @@
 2)Config firmware setting with __USB Dual Port__<br/>
 ![DualPort](images/PololuUSBDualPort.png)
 
-
+### Change Logs:
+  - 0312 Add servo sweeping video
+  - 0312 Upload V0.9.0
+  
