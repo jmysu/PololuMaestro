@@ -19,5 +19,5 @@
 
 ### Change Logs:
   - 0312 Add servo sweeping video
-  - 0312 Upload V0.9.0
+  - 0312 Update Qt5 project V0.9.0
   
