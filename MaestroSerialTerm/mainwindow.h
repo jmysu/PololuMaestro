@@ -88,13 +88,15 @@ class MainWindow : public QMainWindow
 
         //---------------------------------------------------------------------
         QByteArray baLastCmd, baRespose;
-        void MaestroGoHome();
+        void MaestroGoHome();   
         int16_t MaestroGetError();
         int16_t MaestroGetPositionUs(int8_t ch);
         void MaestroSetTargetUs(int8_t ch, int16_t pos);
         void MaestroSetSpeed(int8_t ch, int16_t speed);
         void MaestroSetAcc(int8_t ch, int16_t acc);
         void MaestroTabInit();
+        int16_t MaestroGetChannelMin(int8_t channel);
+        int16_t MaestroGetChannelMax(int8_t channel);
 
 
 

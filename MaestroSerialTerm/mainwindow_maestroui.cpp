@@ -28,7 +28,7 @@ MaestroTabInit()
 void MainWindow::MaestroTabInit()
 {
     QGridLayout *gridMaestro = ui->gridLayoutMaestro;
-    for ( int r=0; r<mMaestroChannels; ++r ){
+    for ( int8_t r=0; r<mMaestroChannels; ++r ){
 
         QComboBox *comboBox = new QComboBox(this);
         comboBox->setProperty("row",r);
@@ -86,8 +86,10 @@ void MainWindow::MaestroTabInit()
         gridMaestro->setColumnMinimumWidth(E8_SpeedSpinBox,     64);
         gridMaestro->setColumnMinimumWidth(E10_AccSpinBox,      64);
         //Adjust min/max
-        int iMin = mChannelMin+mChannelMinAdj[r];
-        int iMax = mChannelMax+mChannelMaxAdj[r];
+        //int iMin = mChannelMin+mChannelMinAdj[r];
+        //int iMax = mChannelMax+mChannelMaxAdj[r];
+        int iMin = MaestroGetChannelMin(r);
+        int iMax = MaestroGetChannelMax(r);
         int iMiddle = iMin + (iMax-iMin)/2;
         int iStep= (iMax-iMin)/50;
         int iInterval= (iMax-iMin)/4;
@@ -110,12 +112,11 @@ qDebug() << r << iMin << iMiddle << iMax;
         targetSpinBox->setValue(iMiddle);
         positionSpinBox->setValue(iMiddle);
 
-        //Disable rows for ChanelOpt=="Off"
+        //Disable rows for ChanelOpt=="Off", E2_Posion and E3_PositionSpinBox
         for (int c=1; c<=E10_AccSpinBox; c++) {
-            if (c==E2_Position) continue; //E2_Position is disabled
             QLayoutItem* item = ui->gridLayoutMaestro->itemAtPosition(r, c);
             QWidget *widget = item->widget();
-            if (slSettingsChannelOpt[r]=="Off")
+            if (slSettingsChannelOpt[r]=="Off" || (c==E2_Position) || (c==E3_PositionSpinBox))
                 widget->setEnabled(false);
             }
         }
@@ -130,6 +131,50 @@ qDebug() << r << iMin << iMiddle << iMax;
     ui->comboBoxSmooth->setCurrentIndex(E0_ServoSmooth); //0:Smooth 1:Fast
     ui->comboBoxSmooth->currentIndexChanged(ui->comboBoxSmooth->currentText());
 
+}
+
+/*
+MaestroGetChannelMin(channel)
+
+    get the Min/Max value from channel
+    as ther are different min/max for different port setting
+
+    Servo:  1000us/2000us with Adj
+    Input:  0/1023
+    Output: 0/12000
+
+        If the channel is configured as a digital output, a position value less than 6000 means the Maestro is driving the line low,
+    while a position value of 6000 or greater means the Maestro is driving the line high.
+
+        If the channel is configured as an input, the position represents the voltage measured on the channel.
+    The inputs on channels 0–11 are analog: their values range from 0 to 1023, representing voltages from 0 to 5 V.
+    (The inputs on channels 12–23 are digital: their values are either exactly 0 or exactly 1023.)
+
+ *
+ */
+int16_t MainWindow::MaestroGetChannelMin(int8_t channel)
+{
+    int16_t iMinCh=mChannelMin+mChannelMinAdj[channel];
+    if (slSettingsChannelOpt[channel]=="Servo")
+        iMinCh = mChannelMin+mChannelMinAdj[channel];
+    else if (slSettingsChannelOpt[channel]=="Input")
+        iMinCh = 0;
+    else if (slSettingsChannelOpt[channel]=="Output")
+        iMinCh = 0;
+
+    return iMinCh;
+}
+int16_t MainWindow::MaestroGetChannelMax(int8_t channel)
+{
+    int16_t iMaxCh=mChannelMax+mChannelMaxAdj[channel];
+    if (slSettingsChannelOpt[channel]=="Servo")
+        iMaxCh = mChannelMax+mChannelMaxAdj[channel];
+    else if (slSettingsChannelOpt[channel]=="Input")
+        iMaxCh = 1023;
+    else if (slSettingsChannelOpt[channel]=="Output")
+        iMaxCh = 12000;
+
+    return iMaxCh;
 }
 /*
 on_pushButtonInit_clicked()
@@ -148,8 +193,10 @@ void MainWindow::on_pushButtonInit_clicked()
     ui->comboBoxSmooth->currentIndexChanged(ui->comboBoxSmooth->currentText());
 
     for (int r=0;r<mMaestroChannels;r++) {
-        int iMin = mChannelMin+mChannelMinAdj[r];
-        int iMax = mChannelMax+mChannelMaxAdj[r];
+        //int iMin = mChannelMin+mChannelMinAdj[r];
+        //int iMax = mChannelMax+mChannelMaxAdj[r];
+        int iMin = MaestroGetChannelMin(r);
+        int iMax = MaestroGetChannelMax(r);
         int iMiddle = iMin + (iMax-iMin)/2;
         //Sync spinbox
         QLayoutItem* item = ui->gridLayoutMaestro->itemAtPosition(r, E5_TargetSpinBox);
@@ -220,13 +267,13 @@ void MainWindow::on_spinBoxSweep_editingFinished()
     if (ui->spinBoxSweep->value()==0) {
         timerMaestroSweep->stop();
         qDebug() << "Stopping sweep timer...";
+        ui->label_status->setText("Status: servo sweeping stopped!");
         }
     else {
         timerMaestroSweep->start(ui->spinBoxSweep->value()*1000);
+        ui->label_status->setText("Status: servo sweeping in action!");
         }
     qDebug() << "timer active:" << timerMaestroSweep->isActive();
-    ui->label_status->setText("Status: Servo Sweeping in action!");
-
 }
 /*
 on_spinBoxCrazy_editingFinished()
@@ -245,13 +292,13 @@ void MainWindow::on_spinBoxCrazy_editingFinished()
     if (ui->spinBoxCrazy->value()==0) {
         timerMaestroCrazy->stop();
         qDebug() << "Stopping crazy timer...";
+        ui->label_status->setText("Status: servo Crazy-mode stopped!");
         }
     else {
         timerMaestroCrazy->start(ui->spinBoxCrazy->value()*1000);
+        ui->label_status->setText("Status: servo Crazy-mode in action!");
         }
     qDebug() << "timer active:" << timerMaestroCrazy->isActive();
-    ui->label_status->setText("Status: Servo Crazy-mode in action!");
-
 }
 
 /*
@@ -313,8 +360,10 @@ void MainWindow::slotMaestroCrazy()
         QSlider *slider = dynamic_cast<QSlider*>(widget);
 
         //Set crazy positions
-        int iMin = mChannelMin+mChannelMinAdj[r];
-        int iMax = mChannelMax+mChannelMaxAdj[r];
+        //int iMin = mChannelMin+mChannelMinAdj[r];
+        //int iMax = mChannelMax+mChannelMaxAdj[r];
+        int iMin = MaestroGetChannelMin(r);
+        int iMax = MaestroGetChannelMax(r);
         int iRandom = (qrand() % (iMax-iMin)) + iMin;
         qDebug() << "Random:" << iRandom;
         slider->setValue(iRandom);
@@ -327,23 +376,53 @@ void MainWindow::slotMaestroCrazy()
 
     Enable/Disable row for ChannelOpt changes
 
+    ***E2,E3_Position always disabled
+
  */
 void MainWindow::slotChannelOptChanged()
 {
     qDebug() << "\n" << Q_FUNC_INFO;
     QComboBox *combo = static_cast<QComboBox *>(QObject::sender());
-    int row = combo->property("row").toInt();
-    qDebug() << row << combo->currentText();
+    int8_t row = combo->property("row").toInt();
+    //qDebug() << row << combo->currentText();
 
     //Disable rows for ChanelOpt=="Off"
     for (int c=1; c<=E10_AccSpinBox; c++) {
         QLayoutItem* item = ui->gridLayoutMaestro->itemAtPosition(row, c);
         QWidget *widget = item->widget();
-        if (combo->currentText() == "Off")
+        if ((combo->currentText()=="Off") || (combo->currentText()=="Input") || (c==E2_Position) || (c==E3_PositionSpinBox) )
             widget->setEnabled(false);
         else
             widget->setEnabled(true);
+        //qDebug() << c << widget->isEnabled();
         }
+
+    //Update slSettingsChannelOpt
+    slSettingsChannelOpt[row] = combo->currentText();
+    //qDebug() << row << slSettingsChannelOpt[row];
+
+    //Update min/max and value at target spinbox
+    int iMin = MaestroGetChannelMin(row);
+    int iMax = MaestroGetChannelMax(row);
+    int iMiddle = iMin + (iMax-iMin)/2;
+    QLayoutItem* item = ui->gridLayoutMaestro->itemAtPosition(row, E5_TargetSpinBox);
+    QWidget *widget = item->widget();
+    QSpinBox *spinbox = dynamic_cast<QSpinBox*>(widget);
+    spinbox->setRange(iMin, iMax);
+    if (slSettingsChannelOpt[row]=="Servo")
+        spinbox->setValue(iMiddle);
+    else
+        spinbox->setValue(iMin);
+    //Update slider
+    item = ui->gridLayoutMaestro->itemAtPosition(row, E6_TargetSlider);
+    widget = item->widget();
+    QSlider *slider = dynamic_cast<QSlider*>(widget);
+    slider->setRange(iMin, iMax);
+    if (slSettingsChannelOpt[row]=="Servo")
+        slider->setValue(iMiddle);
+    else
+        slider->setValue(iMin);
+    qDebug() << "Chanel new range:" << iMin << iMax;
 }
 
 

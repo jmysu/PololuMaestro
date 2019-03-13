@@ -32,7 +32,7 @@ void MainWindow::saveSettings()
         qDebug() << r << combobox->currentText() << sChannelOpt << slSettingsChannelOpt[r];
         if (combobox->currentText() !=  slSettingsChannelOpt[r])  //setting changed
             mySettings->setValue(sChannelOpt, combobox->currentText());
-        qDebug() << mySettings->value(sChannelOpt).toString();
+        //qDebug() << mySettings->value(sChannelOpt).toString();
         }
     mySettings->endGroup();
 
