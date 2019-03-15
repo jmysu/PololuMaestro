@@ -23,5 +23,5 @@
   - 0313 Update V0.9.1, add min/max control for Servo/Input/Output channel options
   - 0315 Update V0.9.2, add Input Position timer, fix settings restore.
   
-  - ~~TODO: Input display w/ timer
+  - ~~TODO: Input display w/ timer~~
   
