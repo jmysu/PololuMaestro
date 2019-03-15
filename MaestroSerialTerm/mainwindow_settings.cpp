@@ -21,7 +21,6 @@ void MainWindow::saveSettings()
     qDebug() << mySettings->value("Baud");
     mySettings->endGroup();
 
-
     mySettings->beginGroup("Maestro");
     for (int r=0;r<mMaestroChannels;r++) {
         QString sChannelOpt = QString("ChannelOpt%1").arg(r);
@@ -30,10 +29,9 @@ void MainWindow::saveSettings()
         QWidget *widget = item->widget();
         QComboBox *combobox = dynamic_cast<QComboBox*>(widget);
         qDebug() << r << combobox->currentText() << sChannelOpt << slSettingsChannelOpt[r];
-        if (combobox->currentText() !=  slSettingsChannelOpt[r])  //setting changed
-            mySettings->setValue(sChannelOpt, combobox->currentText());
-        //qDebug() << mySettings->value(sChannelOpt).toString();
+        mySettings->setValue(sChannelOpt, combobox->currentText());
         }
+
     mySettings->endGroup();
 
     mySettings->sync();
@@ -61,6 +59,7 @@ void MainWindow::readSettings()
         QString sChannelOpt = QString("ChannelOpt%1").arg(r);
         slSettingsChannelOpt <<  mySettings->value(sChannelOpt).toString();
         }
-    qDebug() << slSettingsChannelOpt;
     mySettings->endGroup();
+
+    qDebug() << slSettingsChannelOpt;
     }

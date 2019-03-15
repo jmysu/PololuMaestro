@@ -8,6 +8,7 @@ MaestroRestoreSettings()
  */
 void MainWindow::MaestroRestoreSettings()
 {
+    qDebug() << "\n" << Q_FUNC_INFO;
     //Restore Channel Options
     for ( unsigned char r=0; r<mMaestroChannels; ++r ){
         QLayoutItem* item = ui->gridLayoutMaestro->itemAtPosition(r, E0_OutputOpt);
@@ -17,7 +18,7 @@ void MainWindow::MaestroRestoreSettings()
         int index = combobox->findText(slSettingsChannelOpt[r]);
         if( index>=0 )
             combobox->setCurrentIndex(index);
-        //qDebug() << r << combobox->currentText();
+        qDebug() << r << combobox->currentText();
         }
 
 }
@@ -318,7 +319,7 @@ static bool bSweep=false;
     bSweep = !bSweep;
 
     for (int r=0; r<mMaestroChannels; r++) {
-        if (slSettingsChannelOpt[r]=="Off") continue; //Skip if off
+        if ( (slSettingsChannelOpt[r]=="Off") || (slSettingsChannelOpt[r]=="Input") )continue; //Skip if Off or Input
 
         QLayoutItem* item = ui->gridLayoutMaestro->itemAtPosition(r, E6_TargetSlider);
         QWidget *widget = item->widget();
@@ -353,7 +354,7 @@ void MainWindow::slotMaestroCrazy()
     //ui->comboBoxSmooth->currentIndexChanged(ui->comboBoxSmooth->currentText());
 
     for (int r=0; r<mMaestroChannels; r++) {
-        if (slSettingsChannelOpt[r]=="Off") continue; //Skip if off
+        if ( (slSettingsChannelOpt[r]=="Off") || (slSettingsChannelOpt[r]=="Input") )continue; //Skip if Off or Input
 
         QLayoutItem* item = ui->gridLayoutMaestro->itemAtPosition(r, E6_TargetSlider);
         QWidget *widget = item->widget();
@@ -425,6 +426,24 @@ void MainWindow::slotChannelOptChanged()
     qDebug() << "Chanel new range:" << iMin << iMax;
 }
 
+/*
+slotUpdatePosition()
+
+    Get Postion and update GUI
+
+ */
+void MainWindow::slotUpdatePosition(int8_t ch)
+{
+    int16_t pos = MaestroGetPositionUs(ch);  //Got postion in steps, need to convert back to us (4steps=1us)
+    if (slSettingsChannelOpt[ch]=="Input")
+        pos = pos*4; //convert to steps when channel Option is Input
+
+    QLayoutItem* itemPos = ui->gridLayoutMaestro->itemAtPosition(ch, E3_PositionSpinBox);
+    QWidget *widgetPos = itemPos->widget();
+    QSpinBox *spinboxPos = dynamic_cast<QSpinBox*>(widgetPos);
+    spinboxPos->setValue(pos);
+}
+
 
 /*
 slotTargetSpinBox()
@@ -460,14 +479,7 @@ void MainWindow::slotTargetSpinBox()
     slider->setValue(spinbox->value());
     slider->setToolTip(QString::number(iUs)+"us");
     //Sync position
-    int16_t pos = MaestroGetPositionUs(channel);  //Got postion in steps, need to convert back to us (4steps=1us)
-    //qDebug() << "**Got pos:" << pos << QString::number(pos, 16);
-    QLayoutItem* itemPos = ui->gridLayoutMaestro->itemAtPosition(row, E3_PositionSpinBox);
-    QWidget *widgetPos = itemPos->widget();
-    QSpinBox *spinboxPos = dynamic_cast<QSpinBox*>(widgetPos);
-    spinboxPos->setValue(pos);
-
-
+    slotUpdatePosition(channel);
 }
 
 /*
@@ -530,5 +542,7 @@ void MainWindow::slotAccSpinBox()
 
     MaestroSetAcc(channel, spinbox->value());
 }
+
+
 
 

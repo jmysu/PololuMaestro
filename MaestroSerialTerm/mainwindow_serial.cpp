@@ -11,6 +11,8 @@ void MainWindow::SerialPortsChecks_timer_init(void)
 // Serial Ports check timer fire event handler (this method run each 500ms)
 void MainWindow::SerialPortsCheck(void)
 {
+    //qDebug() << "\n" << Q_FUNC_INFO;
+
     QStringList slActualPorts;
 
     // Get all availables Serial Ports and add them to a list
@@ -55,6 +57,14 @@ void MainWindow::SerialPortsCheck(void)
             qDebug() << "Restored Serial Bauds:" << ui->comboBox_bauds->currentText();
             }
     }
+
+    if ((bSerialOpen) && ui->tabMaestro->isEnabled()){
+        //qDebug() << "Check Positions";
+        for (int8_t r=0; r<mMaestroChannels; r++){
+            if (slSettingsChannelOpt[r] == "Off") continue;
+            slotUpdatePosition(r);
+            }
+        }
 
 }
 

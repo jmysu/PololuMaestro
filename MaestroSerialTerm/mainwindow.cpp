@@ -134,6 +134,7 @@ MainWindow::~MainWindow()
         }
     //save Settings
     saveSettings();
+    readSettings();
 
     // Release UI
     delete ui;

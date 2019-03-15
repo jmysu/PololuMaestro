@@ -128,6 +128,7 @@ class MainWindow : public QMainWindow
         void slotTargetSlider();
         void slotSpeedSpinBox();
         void slotAccSpinBox();
+        void slotUpdatePosition(int8_t ch);
 
         void on_pushButtonReadError_clicked();
         void on_pushButtonInit_clicked();

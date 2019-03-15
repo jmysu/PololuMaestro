@@ -69,9 +69,14 @@ int16_t MainWindow::MaestroGetError()
 
 /*
    Returns the position of the specified servo in microseconds
-   Note that if the microcontroller is unable to read from the
-   servo for any reason than Null or some other obscure value
-   could be returned.
+
+        Note that if the microcontroller is unable to read from the servo for any reason than Null or some other obscure value could be returned.
+
+        If the channel is configured as an input, the position represents the voltage measured on the channel.
+    The inputs on channels 0–11 are analog: their values range from 0 to 1023, representing voltages from 0 to 5 V.
+    The inputs on channels 12–23 are digital: their values are either exactly 0 or exactly 1023.
+
+
 
 Get Position
     Compact protocol: 0x90, channel number
@@ -122,9 +127,9 @@ Set Target
         The lower 7 bits of the third data byte represent bits 0–6 of the target (the lower 7 bits),
     while the lower 7 bits of the fourth data byte represent bits 7–13 of the target. The target is a non-negative integer.
 
-        If the channel is configured as a servo, then the target represents the pulse width to transmit in units of quarter-microseconds.
+        If the channel is configured as a SERVO, then the target represents the pulse width to transmit in units of quarter-microseconds.
     A target value of 0 tells the Maestro to stop sending pulses to the servo.
-        If the channel is configured as a digital output, values less than 6000 tell the Maestro to drive the line low,
+        If the channel is configured as a digital OUTPUT, values less than 6000 tell the Maestro to drive the line low,
     while values of 6000 or greater tell the Maestro to drive the line high.
 
         For example, if channel 2 is configured as a servo and you want to set its target to 1500 µs
