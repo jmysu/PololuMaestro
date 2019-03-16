@@ -8,6 +8,7 @@
   - [Maestro Serial Settings](https://www.pololu.com/docs/0J40/5.a)
   - [Maestro Serial Protocol](https://www.pololu.com/docs/0J40/5.c)
   - [Maestro Firmware Upgrade](https://www.pololu.com/docs/0J40/4.f)
+  - [Inverse kinematics: How to move a robotic arm](https://appliedgo.net/roboticarm/)
   <br/>
   <br/>
   
